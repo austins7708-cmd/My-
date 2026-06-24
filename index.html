@@ -2,7 +2,119 @@
 <html>
 <head>
     <title>My Custom Clicker Game</title>
+    <style><!DOCTYPE html>
+<html>
+<head>
+    <title>My Custom Clicker Game</title>
     <style>
+        body { text-align: center; font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding-top: 30px; user-select: none; -webkit-user-select: none; }
+        .score-container { background: #1e293b; max-width: 400px; margin: 0 auto 20px auto; padding: 15px; border-radius: 16px; border: 2px solid #334155; position: relative; }
+        h1 { font-size: 48px; margin: 0; color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        p { font-size: 16px; color: #94a3b8; margin: 5px 0; }
+        .btn { font-size: 32px; padding: 25px 50px; cursor: pointer; border-radius: 50%; border: none; background: #ef4444; color: white; font-weight: bold; margin: 20px 0; box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5); transition: transform 0.1s; }
+        .btn:active { transform: scale(0.92); }
+        .shop-container { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 20px auto; padding: 15px; background: #1e293b; border-radius: 16px; }
+        .shop-btn { font-size: 16px; padding: 12px; border-radius: 8px; border: none; background: #22c55e; color: white; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
+        .shop-btn:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; }
+        .secret-cheat-btn { position: absolute; top: 5px; right: 5px; width: 25px; height: 25px; background: transparent; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="score-container">
+        <button class="secret-cheat-btn" onclick="activateCheat()"></button>
+        <h1><span id="score">0</span></h1>
+        <p>⚡ Clicking Power: +<span id="clickPower">1</span></p>
+        <p>🤖 Auto-Income: +<span id="cps">0</span>/sec</p>
+    </div>
+    
+    <button class="btn" onclick="clickButton()">🔴</button>
+    
+    <div class="shop-container">
+        <button class="shop-btn" id="btn1" onclick="buyUpgrade('auto')">
+            <span>🛒 Buy Auto-Clicker (+1/s)</span> <span id="cost1">Cost: 15</span>
+        </button>
+        <button class="shop-btn" id="btn2" onclick="buyUpgrade('click')">
+            <span>🌟 Golden Cookie (+2 Click)</span> <span id="cost2">Cost: 50</span>
+        </button>
+        <button class="shop-btn" id="btn3" onclick="buyUpgrade('hacker')">
+            <span>👾 AI Hacker Bot (+50/s)</span> <span id="cost3">Cost: 500</span>
+        </button>
+        <button class="shop-btn" id="btn4" onclick="buyUpgrade('quantum')">
+            <span>🌌 Quantum Server (+500/s)</span> <span id="cost4">Cost: 10000</span>
+        </button>
+    </div>
+
+    <br>
+    <div style="display: flex; gap: 10px; max-width: 400px; margin: 0 auto;">
+        <button class="shop-btn" style="background: #3b82f6; flex: 1;" onclick="saveGame()">💾 Save Game</button>
+        <button class="shop-btn" style="background: #94a3b8; flex: 1; font-size: 14px;" onclick="resetGame()">🔄 Reset</button>
+    </div>
+
+    <script>
+        let score = parseFloat(localStorage.getItem("clicker_score")) || 0;
+        let clickPower = parseInt(localStorage.getItem("clicker_power")) || 1;
+        let autoIncome = parseInt(localStorage.getItem("clicker_income")) || 0;
+        let costs = {
+            auto: parseInt(localStorage.getItem("cost_auto")) || 15,
+            click: parseInt(localStorage.getItem("cost_click")) || 50,
+            hacker: parseInt(localStorage.getItem("cost_hacker")) || 500,
+            quantum: parseInt(localStorage.getItem("cost_quantum")) || 10000
+        };
+
+        function updateUI() {
+            document.getElementById("score").innerText = Math.floor(score);
+            document.getElementById("clickPower").innerText = clickPower;
+            document.getElementById("cps").innerText = autoIncome;
+            document.getElementById("cost1").innerText = "Cost: " + costs.auto;
+            document.getElementById("cost2").innerText = "Cost: " + costs.click;
+            document.getElementById("cost3").innerText = "Cost: " + costs.hacker;
+            document.getElementById("cost4").innerText = "Cost: " + costs.quantum;
+            document.getElementById("btn1").disabled = score < costs.auto;
+            document.getElementById("btn2").disabled = score < costs.click;
+            document.getElementById("btn3").disabled = score < costs.hacker;
+            document.getElementById("btn4").disabled = score < costs.quantum;
+        }
+
+        window.clickButton = function() { score += clickPower; updateUI(); }
+        window.activateCheat = function() { score += 1000; updateUI(); }
+        
+        window.saveGame = function() {
+            localStorage.setItem("clicker_score", score);
+            localStorage.setItem("clicker_power", clickPower);
+            localStorage.setItem("clicker_income", autoIncome);
+            localStorage.setItem("cost_auto", costs.auto);
+            localStorage.setItem("cost_click", costs.click);
+            localStorage.setItem("cost_hacker", costs.hacker);
+            localStorage.setItem("cost_quantum", costs.quantum);
+            alert("Game Saved! 💾");
+        }
+
+        window.resetGame = function() {
+            if (confirm("Reset everything?")) {
+                localStorage.clear();
+                score = 0; clickPower = 1; autoIncome = 0;
+                costs = { auto: 15, click: 50, hacker: 500, quantum: 10000 };
+                updateUI();
+            }
+        }
+
+        window.buyUpgrade = function(type) {
+            if (score >= costs[type]) {
+                score -= costs[type];
+                if (type === 'auto') { autoIncome += 1; costs.auto = Math.floor(costs.auto * 1.4); }
+                else if (type === 'click') { clickPower += 2; costs.click = Math.floor(costs.click * 1.6); }
+                else if (type === 'hacker') { autoIncome += 50; costs.hacker = Math.floor(costs.hacker * 1.8); }
+                else if (type === 'quantum') { autoIncome += 500; costs.quantum = Math.floor(costs.quantum * 2.0); }
+                updateUI();
+            }
+        }
+
+        updateUI();
+        setInterval(function() { if (autoIncome > 0) { score += (autoIncome / 10); updateUI(); } }, 100);
+    </script>
+</body>
+</html>
         body { text-align: center; font-family: system-ui, sans-serif; background: #0f172a; color: #fff; padding-top: 30px; user-select: none; -webkit-user-select: none; }
         .score-container { background: #1e293b; max-width: 400px; margin: 0 auto 20px auto; padding: 15px; border-radius: 16px; border: 2px solid #334155; position: relative; }
         h1 { font-size: 48px; margin: 0; color: #fbbf24; text-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
