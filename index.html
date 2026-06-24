@@ -1,4 +1,4 @@
-index.<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>My Custom Clicker Game</title>
@@ -36,6 +36,9 @@ index.<!DOCTYPE html>
         <button class="shop-btn" id="btn3" onclick="buyUpgrade('hacker')">
             <span>👾 AI Hacker Bot (+50/s)</span> <span id="cost3">Cost: 500</span>
         </button>
+        <button class="shop-btn" id="btn4" onclick="buyUpgrade('quantum')">
+            <span>🌌 Quantum Server (+500/s)</span> <span id="cost4">Cost: 10000</span>
+        </button>
     </div>
 
     <br>
@@ -51,7 +54,8 @@ index.<!DOCTYPE html>
         let costs = {
             auto: parseInt(localStorage.getItem("cost_auto")) || 15,
             click: parseInt(localStorage.getItem("cost_click")) || 50,
-            hacker: parseInt(localStorage.getItem("cost_hacker")) || 500
+            hacker: parseInt(localStorage.getItem("cost_hacker")) || 500,
+            quantum: parseInt(localStorage.getItem("cost_quantum")) || 10000
         };
 
         function updateUI() {
@@ -61,9 +65,11 @@ index.<!DOCTYPE html>
             document.getElementById("cost1").innerText = "Cost: " + costs.auto;
             document.getElementById("cost2").innerText = "Cost: " + costs.click;
             document.getElementById("cost3").innerText = "Cost: " + costs.hacker;
+            document.getElementById("cost4").innerText = "Cost: " + costs.quantum;
             document.getElementById("btn1").disabled = score < costs.auto;
             document.getElementById("btn2").disabled = score < costs.click;
             document.getElementById("btn3").disabled = score < costs.hacker;
+            document.getElementById("btn4").disabled = score < costs.quantum;
         }
 
         window.clickButton = function() { score += clickPower; updateUI(); }
@@ -76,6 +82,7 @@ index.<!DOCTYPE html>
             localStorage.setItem("cost_auto", costs.auto);
             localStorage.setItem("cost_click", costs.click);
             localStorage.setItem("cost_hacker", costs.hacker);
+            localStorage.setItem("cost_quantum", costs.quantum);
             alert("Game Saved! 💾");
         }
 
@@ -83,7 +90,7 @@ index.<!DOCTYPE html>
             if (confirm("Reset everything?")) {
                 localStorage.clear();
                 score = 0; clickPower = 1; autoIncome = 0;
-                costs = { auto: 15, click: 50, hacker: 500 };
+                costs = { auto: 15, click: 50, hacker: 500, quantum: 10000 };
                 updateUI();
             }
         }
@@ -94,6 +101,7 @@ index.<!DOCTYPE html>
                 if (type === 'auto') { autoIncome += 1; costs.auto = Math.floor(costs.auto * 1.4); }
                 else if (type === 'click') { clickPower += 2; costs.click = Math.floor(costs.click * 1.6); }
                 else if (type === 'hacker') { autoIncome += 50; costs.hacker = Math.floor(costs.hacker * 1.8); }
+                else if (type === 'quantum') { autoIncome += 500; costs.quantum = Math.floor(costs.quantum * 2.0); }
                 updateUI();
             }
         }
